@@ -7,15 +7,14 @@ VoiceKhata AI operates on a production-grade **dual-engine database architecture
 
 ---
 
-## 1. Supabase Cloud Configuration
+## 1. Supabase Cloud Configuration (Optional)
 
-- **Supabase Project ID:** `byxffivsuqhijbdjphsp`
-- **Project Name:** `uptime` / VoiceKhata AI
-- **Region:** `ap-south-1` (AWS Mumbai)
-- **Supabase URL:** `https://byxffivsuqhijbdjphsp.supabase.co`
-- **Publishable Key:** `sb_publishable_TC4rn5IotxU75UzR2aU_3Q_0A8NyKf_`
-- **Database Engine:** PostgreSQL 17.11 (GA)
-- **Direct DB Host:** `db.byxffivsuqhijbdjphsp.supabase.co:5432`
+- **Supabase URL:** `https://<YOUR-PROJECT-REF>.supabase.co`
+- **Publishable Key:** `your_publishable_or_anon_key`
+- **Database Engine:** PostgreSQL 15+
+- **Direct DB Host:** `db.<YOUR-PROJECT-REF>.supabase.co:5432`
+- **Default Mode:** High-speed SQLite WAL mode (`voice_khata.db`) for instant local & edge execution without requiring any remote cloud setup.
+- **Cloud Mode:** Whenever `SUPABASE_URL` and `SUPABASE_KEY` or `DATABASE_URL` are provided in `.env` or cloud provider (e.g. Render / Railway), the app automatically mirrors transactions to Supabase!
 
 ---
 
