@@ -15,8 +15,8 @@ class Settings:
     # Database
     DB_PATH: str = os.getenv("DB_PATH", str(BASE_DIR / "voice_khata.db"))
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
-    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
-    SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
+    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "https://chymnlwzaztecurdhoaj.supabase.co")
+    SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "sb_publishable_xbaO8_-rAHU6ew6rxP6Dsw_lSBVy5fp")
     
     # Gnani API Platform
     GNANI_API_KEY: str = os.getenv("GNANI_API_KEY", "")
