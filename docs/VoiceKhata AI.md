@@ -2,9 +2,9 @@
 
 **A hands-free, multilingual voice ledger for kirana stores**
 
-Project report · Build Bengaluru 2.0 · Gnani Voice Hackathon, Track PS2 (Voice Khata for kirana stores)
+Project report · BOLBHARAT - The Gnani Voice AI Innovation Challenge, Track PS2 (Voice Khata for kirana stores)
 
-Prepared by Pavan B C and team, DSATM, Bengaluru · Team name and ID: \[to be filled\] · Version 1.0 · 11 November 2026
+Prepared by Pavan B C (@PavanCodeNexus) · Version 1.0 · November 2026
 
 Status: design baseline. The product is built during the 24-hour hackathon on 21–22 November 2026. “VoiceKhata AI” is a working title.
 

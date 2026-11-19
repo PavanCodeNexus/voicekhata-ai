@@ -2,9 +2,9 @@
 
 | Item | Detail |
 |---|---|
-| Product | VoiceKhata AI (working title) |
-| Event | Build Bengaluru 2.0, Gnani Voice Hackathon, Track PS2 (Voice Khata for kirana stores) |
-| Team | NeuralNexus (lead: Pavan B C) |
+| Product | VoiceKhata AI |
+| Event | BOLBHARAT - The Gnani Voice AI Innovation Challenge (Track PS2: Voice Khata for kirana stores) |
+| Developer | Pavan B C (@PavanCodeNexus) |
 | Version | 0.1, design baseline |
 | Updated | 17 November 2026 |
 | Build window | 24 hours, 21-22 November 2026 |
