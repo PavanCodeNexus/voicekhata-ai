@@ -29,7 +29,31 @@ class ManualTxnRequest(BaseModel):
 
 @api_router.get("/health")
 def health_check():
-    return {"status": "healthy", "service": "VoiceKhata AI", "version": settings.VERSION}
+    from app.db.supabase_service import supabase_service
+    sb_connected = supabase_service.ping()
+    return {
+        "status": "healthy",
+        "service": "VoiceKhata AI",
+        "version": settings.VERSION,
+        "database": {
+            "mode": "supabase" if sb_connected else "sqlite_fallback",
+            "supabase_configured": supabase_service.is_configured(),
+            "supabase_connected": sb_connected,
+            "supabase_url": settings.SUPABASE_URL
+        }
+    }
+
+@api_router.get("/supabase/status")
+def supabase_status():
+    from app.db.supabase_service import supabase_service
+    sb_connected = supabase_service.ping()
+    return {
+        "supabase_configured": supabase_service.is_configured(),
+        "supabase_connected": sb_connected,
+        "supabase_url": settings.SUPABASE_URL,
+        "schema": "voicekhata",
+        "views": ["vk_customers", "vk_transactions", "vk_bills"]
+    }
 
 @api_router.get("/summary")
 def get_summary_endpoint():

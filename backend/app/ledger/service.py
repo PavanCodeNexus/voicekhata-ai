@@ -67,6 +67,21 @@ def record_transaction(
     
     conn.commit()
     
+    # Real-time Supabase cloud sync
+    try:
+        from app.db.supabase_service import supabase_service
+        supabase_service.record_transaction({
+            "customer_id": customer_id,
+            "customer_name": customer_name,
+            "kind": kind,
+            "amount_paise": amount_paise,
+            "note": note or "",
+            "source": source,
+            "parse_confidence": confidence
+        })
+    except Exception:
+        pass
+    
     # Get updated balance
     cur_bal_paise = get_customer_balance_paise(customer_id, conn) if customer_id else 0
     

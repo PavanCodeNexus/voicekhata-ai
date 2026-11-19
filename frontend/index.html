@@ -147,6 +147,12 @@
           <button data-lang="en-IN" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-medium text-inkSecondary hover:text-inkPrimary transition">English</button>
         </div>
 
+        <!-- Supabase Cloud Badge -->
+        <div id="dbBadge" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emeraldSoft text-emeraldBrand font-mono font-bold text-[11px] tabular-nums border border-emeraldBrand/20" title="Live Cloud PostgreSQL on Supabase">
+          <span id="dbBadgeDot" class="w-1.5 h-1.5 rounded-full bg-emeraldBrand animate-pulse"></span>
+          <span id="dbBadgeText">Supabase PG (Live)</span>
+        </div>
+
         <!-- Latency HUD Pill -->
         <div id="hudTiming" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emeraldSoft text-emeraldBrand font-mono font-bold text-[11px] tabular-nums">
           <span class="w-1.5 h-1.5 rounded-full bg-emeraldBrand"></span>
@@ -748,9 +754,28 @@
       });
     });
 
+    async function checkDatabaseHealth() {
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        const badgeText = document.getElementById('dbBadgeText');
+        const badgeDot = document.getElementById('dbBadgeDot');
+        if (data.database && data.database.supabase_connected) {
+          if (badgeText) badgeText.textContent = 'Supabase PG (Live)';
+          if (badgeDot) badgeDot.className = 'w-1.5 h-1.5 rounded-full bg-emeraldBrand animate-pulse';
+        } else {
+          if (badgeText) badgeText.textContent = 'SQLite (Local WAL)';
+          if (badgeDot) badgeDot.className = 'w-1.5 h-1.5 rounded-full bg-saffron';
+        }
+      } catch (e) {
+        console.warn('Health check failed', e);
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       initSpeechRecognition();
       refreshDashboard();
+      checkDatabaseHealth();
     });
   </script>
 </body>
