@@ -33,21 +33,25 @@ def groq_llm_parse(transcript: str, language: str) -> Optional[Dict[str, Any]]:
             f"Transcript: \"{transcript}\"\n"
             "Return JSON only: {\"customer_name\": string, \"amount_rupees\": float, \"kind\": \"credit_sale\"|\"payment_received\"}"
         )
-        payload = {
-            "model": "llama-3.1-8b-instant",
-            "messages": [{"role": "user", "content": prompt}],
-            "response_format": {"type": "json_object"},
-            "temperature": 0.1,
-            "max_tokens": 150
-        }
-        r = httpx.post(url, headers=headers, json=payload, timeout=2.5)
-        if r.status_code == 200:
-            import json
-            data = r.json()
-            content = data["choices"][0]["message"]["content"]
-            parsed = json.loads(content)
-            if parsed.get("amount_rupees") and parsed.get("customer_name"):
-                return parsed
+        for model in ["qwen/qwen3.8-27b", "openai/gpt-oss-20b", "llama-3.1-8b-instant"]:
+            try:
+                payload = {
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.1,
+                    "max_tokens": 150
+                }
+                r = httpx.post(url, headers=headers, json=payload, timeout=3.0)
+                if r.status_code == 200:
+                    import json
+                    data = r.json()
+                    content = data["choices"][0]["message"]["content"]
+                    parsed = json.loads(content)
+                    if parsed.get("amount_rupees") and parsed.get("customer_name"):
+                        return parsed
+            except Exception:
+                continue
     except Exception as e:
         logger.warning(f"Groq LLM fallback error: {e}")
     return None
