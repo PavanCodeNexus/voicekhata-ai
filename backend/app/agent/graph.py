@@ -1,8 +1,12 @@
 import time
 import re
 import sqlite3
+import datetime
+import httpx
+import logging
 from typing import Dict, Any, Optional
 
+from app.config import settings
 from app.agent.state import AgentState
 from app.agent.templates.voice_templates import format_spoken_response
 from app.nlu.numbers import parse_spoken_number
@@ -11,6 +15,42 @@ from app.nlu.dates import resolve_relative_date
 from app.nlu.names import extract_candidate_name_from_text, match_customers_in_db
 from app.ledger.service import record_transaction, apply_correction
 from app.ledger.queries import get_today_summary, get_customer_statement
+
+logger = logging.getLogger("voicekhata.agent")
+
+def groq_llm_parse(transcript: str, language: str) -> Optional[Dict[str, Any]]:
+    """Optional Groq LLM fallback for complex, highly colloquial sentences."""
+    if not settings.GROQ_API_KEY:
+        return None
+    try:
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        prompt = (
+            "You are an Indian Kirana store Khata NLU parser. Extract customer name, amount in rupees, and transaction kind (credit_sale or payment_received) from this spoken transcript.\n"
+            f"Transcript: \"{transcript}\"\n"
+            "Return JSON only: {\"customer_name\": string, \"amount_rupees\": float, \"kind\": \"credit_sale\"|\"payment_received\"}"
+        )
+        payload = {
+            "model": "llama-3.1-8b-instant",
+            "messages": [{"role": "user", "content": prompt}],
+            "response_format": {"type": "json_object"},
+            "temperature": 0.1,
+            "max_tokens": 150
+        }
+        r = httpx.post(url, headers=headers, json=payload, timeout=2.5)
+        if r.status_code == 200:
+            import json
+            data = r.json()
+            content = data["choices"][0]["message"]["content"]
+            parsed = json.loads(content)
+            if parsed.get("amount_rupees") and parsed.get("customer_name"):
+                return parsed
+    except Exception as e:
+        logger.warning(f"Groq LLM fallback error: {e}")
+    return None
 
 # Session memory for active ambiguity and last active customer
 session_cache: Dict[str, Any] = {
@@ -269,6 +309,37 @@ def process_utterance(transcript: str, language: str = "kn-IN", conn: Optional[s
             "spoken_reply": voice_out,
             "timings": timings
         }
+
+    # 6. Optional Groq LLM Fallback (if deterministic rules did not catch it)
+    if settings.GROQ_API_KEY:
+        llm_res = groq_llm_parse(transcript, language)
+        if llm_res and conn:
+            c_name = llm_res.get("customer_name")
+            amt_rupees = float(llm_res.get("amount_rupees", 0))
+            amt_paise = int(round(amt_rupees * 100))
+            kind = llm_res.get("kind", "credit_sale")
+            if c_name and amt_paise > 0:
+                res = record_transaction(
+                    conn=conn,
+                    customer_name=c_name,
+                    amount_paise=amt_paise,
+                    kind=kind,
+                    txn_time=datetime.datetime.now().isoformat(),
+                    confidence=0.85
+                )
+                voice_out = format_spoken_response({
+                    "intent": "TRANSACTION",
+                    "records": [res]
+                }, lang=language)
+                timings["total_ms"] = int((time.time() - t_start) * 1000)
+                return {
+                    "intent": "TRANSACTION",
+                    "status": "SUCCESS",
+                    "records": [res],
+                    "spoken_reply": voice_out,
+                    "timings": timings,
+                    "source": "groq_llm"
+                }
 
     # Fallback
     timings["total_ms"] = int((time.time() - t_start) * 1000)

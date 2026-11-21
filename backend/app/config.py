@@ -24,6 +24,10 @@ class Settings:
     GNANI_STT_WS_URL: str = os.getenv("GNANI_STT_WS_URL", "wss://api.gnani.ai/v1/prisma/stream")
     GNANI_TTS_WS_URL: str = os.getenv("GNANI_TTS_WS_URL", "wss://api.gnani.ai/v1/timbre/stream")
     
+    # Optional LLM Fallback (Groq)
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "groq")
+    
     # Shop Info
     SHOP_NAME: str = os.getenv("SHOP_NAME", "Sri Krishna Provision Stores")
     SHOP_TIMEZONE: str = os.getenv("SHOP_TIMEZONE", "Asia/Kolkata")
