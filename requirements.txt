@@ -1,53 +1,6 @@
-# VoiceKhata AI backend. Lower bounds only. After the first successful install run
-# `pip freeze > requirements.lock.txt` and pin from that.
-
-# web, realtime
-fastapi>=0.110
-uvicorn[standard]>=0.29
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
 websockets>=12.0
-httpx>=0.27
-python-multipart>=0.0.9
-
-# config, validation
-pydantic>=2.6
-pydantic-settings>=2.2
-python-dotenv>=1.0
-
-# agent
-langgraph>=0.2
-langchain>=0.3
-langchain-core>=0.3
-langchain-groq>=0.2        # swap for another provider package if you use a different LLM
-
-# database
-sqlalchemy>=2.0
-alembic>=1.13
-aiosqlite>=0.20            # SQLite for the demo
-psycopg[binary]>=3.1       # PostgreSQL for production
-
-# security
-cryptography>=42.0
-argon2-cffi>=23.1
-pyjwt>=2.8
-
-# language understanding helpers
-rapidfuzz>=3.6             # fuzzy name matching
-jellyfish>=1.0             # phonetic keys
-
-# documents and exports
-reportlab>=4.1             # bill and report PDFs
-openpyxl>=3.1              # Excel
-pandas>=2.2
-qrcode[pil]>=7.4           # UPI QR (stretch)
-pillow>=10.2
-
-# audio utilities (resampling, noise mixing)
-numpy>=1.26
-soundfile>=0.12
-pydub>=0.25                # needs ffmpeg installed on the system
-
-# dev and quality
-pytest>=8.0
-pytest-asyncio>=0.23
-ruff>=0.4
-pip-audit>=2.7
+python-dotenv>=1.0.0
+pydantic>=2.6.0
+httpx>=0.27.0
